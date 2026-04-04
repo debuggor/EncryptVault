@@ -43,19 +43,60 @@ Cargo workspace with four platform-agnostic Rust crates:
 
 ## Development
 
+### Prerequisites
+
+**Rust**
 ```bash
-# Install dependencies
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# Re-open your terminal after installation
+```
+
+**Node.js** (v18 or later)
+```bash
+brew install node
+# or download from https://nodejs.org
+```
+
+**macOS system dependencies**
+```bash
+xcode-select --install
+```
+
+### Running in Development Mode
+
+```bash
+# 1. Install JS dependencies
 npm install
 
-# Run in dev mode
+# 2. Start the app with hot reload
 npm run tauri dev
+```
 
-# Build
+> The first run takes several minutes — Rust compiles all crates from scratch. Subsequent runs are fast due to incremental compilation.
+
+### Building for Production
+
+```bash
 npm run tauri build
+```
 
-# Run Rust tests
+The compiled `.app` bundle is output to `src-tauri/target/release/bundle/macos/`.
+
+### Running Tests
+
+```bash
+# Run all Rust unit tests
 cargo test
 ```
+
+### Troubleshooting
+
+| Error | Fix |
+|---|---|
+| `linker 'cc' not found` | Run `xcode-select --install` |
+| `rustup: command not found` | Re-open terminal after Rust install |
+| Port 1420 already in use | Kill the process on that port, or change `server.port` in `vite.config.ts` |
+| `npm: command not found` | Install Node.js first |
 
 ## Docs
 
