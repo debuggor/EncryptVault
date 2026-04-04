@@ -1,0 +1,4 @@
+[package]
+name = "password-vault"
+version = "0.1.0"
+edition = "2021"
