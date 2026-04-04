@@ -7,7 +7,7 @@
 
 ## Overview
 
-EncryptVault is a macOS desktop application built with Tauri (Rust backend + React/Tailwind frontend). It bundles four security-focused tools into a single local-only app: file/text encryption, a password manager, a crypto wallet (ETH + BTC), and a QR code generator/reader. All cryptographic operations run in Rust; the frontend never handles raw keys or plaintext.
+EncryptVault is a fully offline macOS desktop application built with Tauri (Rust backend + React/Tailwind frontend). It bundles four security-focused tools into a single local-only app: file/text encryption, a password manager, a crypto wallet (ETH + BTC), and a QR code generator/reader. All cryptographic operations run in Rust; the frontend never handles raw keys or plaintext. The app makes no network requests of any kind.
 
 ---
 
@@ -59,9 +59,10 @@ State management via React context (no external store needed at this scope).
 - BIP-39 mnemonic generation and import
 - BIP-44 HD derivation for ETH (`m/44'/60'/0'/0/x`) and BTC (`m/44'/0'/0'/0/x`)
 - Mnemonic stored encrypted in `vault.db` (same master password key)
-- Exposed operations: list accounts, get balance (via RPC), sign transaction, get receive address
-- Private keys never leave this crate — Tauri commands receive only public addresses and signed payloads
-- ETH: `ethers` crate; BTC: `bitcoin` crate
+- Exposed operations: generate mnemonic, import mnemonic, derive accounts (public address), sign transaction offline
+- No network access — no balance queries, no RPC calls, no broadcast
+- Private keys never leave this crate — Tauri commands receive only public addresses and signed transaction bytes
+- ETH: `ethers` crate (offline signing only); BTC: `bitcoin` crate
 
 ### `crates/qr-engine`
 - **Generate:** accepts a UTF-8 string, returns a PNG (bytes) encoding a QR code (`qrcode` crate)
@@ -90,8 +91,9 @@ State management via React context (no external store needed at this scope).
 
 ### Wallet
 - On unlock, HD wallet reconstructed in memory from decrypted mnemonic.
-- Balance queries: Tauri command → `wallet` crate → JSON-RPC call to public ETH/BTC node.
-- Sign transaction: frontend sends unsigned tx → Tauri → `wallet` crate signs with in-memory key → signed tx returned.
+- Derive address: frontend requests account index → Tauri → `wallet` crate derives public address → returned to frontend.
+- Sign transaction: frontend sends unsigned tx (raw bytes or structured fields) → Tauri → `wallet` crate signs with in-memory key → signed tx bytes returned as hex. User copies and broadcasts manually via an external tool.
+- No network calls of any kind — balance and broadcast are out of scope.
 
 ### QR Code
 - Generate: frontend sends string → Tauri → `qr-engine` → PNG bytes → displayed in frontend as data URL.
@@ -111,7 +113,7 @@ State management via React context (no external store needed at this scope).
 
 ## Security Constraints
 
-- No network access except wallet RPC calls (ETH/BTC public nodes).
+- No network access of any kind — fully air-gapped operation.
 - Private keys and master-derived key never serialized to disk or sent over any Tauri command.
 - macOS `camera` capability declared in `tauri.conf.json`; permission prompt shown on first camera use.
 - Vault DB file permissions set to `0600` on creation.
@@ -134,3 +136,4 @@ State management via React context (no external store needed at this scope).
 - Multi-device support
 - Networks beyond ETH and BTC
 - NFT or DeFi features
+- Balance queries or transaction broadcast (user broadcasts signed tx via external tools)
