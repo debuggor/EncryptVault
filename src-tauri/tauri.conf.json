@@ -19,7 +19,9 @@
         "fullscreen": false
       }
     ],
-    "security": { "csp": null }
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data:; media-src 'self' blob:"
+    }
   },
   "bundle": {
     "active": true,

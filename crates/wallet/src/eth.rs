@@ -50,6 +50,9 @@ pub fn sign_eth_tx(seed: &[u8; 64], index: u32, tx: &EthTx) -> Result<String, St
     let value_bytes = decimal_to_be_bytes_minimal(&tx.value)?;
     let gas_price_bytes = decimal_to_be_bytes_minimal(&tx.gas_price)?;
     let to_bytes = hex_to_bytes(tx.to.strip_prefix("0x").unwrap_or(&tx.to))?;
+    if to_bytes.len() != 20 {
+        return Err(format!("invalid 'to' address: expected 20 bytes, got {}", to_bytes.len()));
+    }
     let data_bytes = hex_to_bytes(tx.data.strip_prefix("0x").unwrap_or(""))?;
 
     // EIP-155 signing payload: RLP([nonce, gasPrice, gasLimit, to, value, data, chainId, 0, 0])

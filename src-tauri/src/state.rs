@@ -6,7 +6,6 @@ pub struct AppState {
     pub vault_key: Mutex<Option<[u8; 32]>>,
     pub vault: Mutex<Option<Vault>>,
     pub wallet: Mutex<Option<Wallet>>,
-    pub vault_db_path: Mutex<Option<String>>,
 }
 
 impl Default for AppState {
@@ -15,7 +14,6 @@ impl Default for AppState {
             vault_key: Mutex::new(None),
             vault: Mutex::new(None),
             wallet: Mutex::new(None),
-            vault_db_path: Mutex::new(None),
         }
     }
 }

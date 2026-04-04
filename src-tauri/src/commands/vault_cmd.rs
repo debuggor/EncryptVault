@@ -29,7 +29,10 @@ pub fn unlock_vault(password: String, state: State<'_, AppState>) -> Result<(), 
         bytes.try_into().map_err(|_| "corrupt salt file".to_string())?
     } else {
         let s = generate_salt();
-        std::fs::write(&salt_path, s).map_err(|e| e.to_string())?;
+        // Write atomically: temp file + rename to avoid a corrupt salt on crash
+        let tmp = format!("{salt_path}.tmp");
+        std::fs::write(&tmp, s).map_err(|e| e.to_string())?;
+        std::fs::rename(&tmp, &salt_path).map_err(|e| e.to_string())?;
         s
     };
 
