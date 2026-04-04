@@ -29,6 +29,9 @@ pub fn decode_bytes(data: &[u8]) -> Result<String, String> {
 /// Decode a QR code from a raw RGBA camera frame.
 /// Returns None if no QR code is detected.
 pub fn decode_frame(rgba: &[u8], width: u32, height: u32) -> Option<String> {
+    if rgba.len() < (width * height * 4) as usize {
+        return None;
+    }
     let gray = GrayImage::from_fn(width, height, |x, y| {
         let i = ((y * width + x) * 4) as usize;
         let r = rgba[i] as u32;
