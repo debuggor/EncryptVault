@@ -1,0 +1,9 @@
+[workspace]
+resolver = "2"
+members = [
+    "src-tauri",
+    "crates/encrypt",
+    "crates/password-vault",
+    "crates/wallet",
+    "crates/qr-engine",
+]
