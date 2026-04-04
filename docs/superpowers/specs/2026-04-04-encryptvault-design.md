@@ -7,7 +7,9 @@
 
 ## Overview
 
-EncryptVault is a fully offline macOS desktop application built with Tauri (Rust backend + React/Tailwind frontend). It bundles four security-focused tools into a single local-only app: file/text encryption, a password manager, a crypto wallet (ETH + BTC), and a QR code generator/reader. All cryptographic operations run in Rust; the frontend never handles raw keys or plaintext. The app makes no network requests of any kind.
+EncryptVault is a fully offline desktop application built with Tauri (Rust backend + React/Tailwind frontend). It bundles four security-focused tools into a single local-only app: file/text encryption, a password manager, a crypto wallet (ETH + BTC), and a QR code generator/reader. All cryptographic operations run in Rust; the frontend never handles raw keys or plaintext. The app makes no network requests of any kind.
+
+**Platform roadmap:** v1 targets macOS only. Future versions will expand to iOS and Android via Tauri Mobile. The Rust workspace crates (`encrypt`, `password-vault`, `wallet`, `qr-engine`) are written as platform-agnostic libraries from the start to enable this expansion with minimal rework.
 
 ---
 
@@ -133,7 +135,8 @@ State management via React context (no external store needed at this scope).
 
 - Cloud sync or backup
 - Browser extension integration
-- Multi-device support
+- Multi-device support / sync
+- iOS and Android (planned for future versions)
 - Networks beyond ETH and BTC
 - NFT or DeFi features
 - Balance queries or transaction broadcast (user broadcasts signed tx via external tools)
