@@ -1,57 +1,124 @@
 # Settings Page & Reset Master Password — Design Spec
 
 **Date:** 2026-04-05  
-**Status:** Approved
+**Status:** Approved (updated: settings crate added)
 
 ---
 
 ## Overview
 
-Add a dedicated **Settings** page to the EncryptVault sidebar. The initial feature is **Reset Master Password**: the user can change their master password while the vault is unlocked. On success, the vault is locked and the user must re-authenticate with the new password.
+Add a dedicated **Settings** page to the EncryptVault sidebar, backed by a new `crates/settings` Rust crate. The initial feature is **Reset Master Password**: the user can change their master password while the vault is unlocked. On success, the vault is locked and the user must re-authenticate with the new password.
+
+The `settings` crate is designed to grow — future settings (e.g., auto-lock timeout, theme preferences) will be added as new modules inside it.
 
 ---
 
 ## Architecture
 
-The feature spans two layers:
+Three layers of change:
 
-- **Backend (Rust/Tauri):** A new `reset_master_password` command in `src-tauri/src/commands/vault_cmd.rs` that re-encrypts the entire vault with the new password and commits atomically.
+- **`crates/settings` (new):** Pure Rust library that owns all settings logic. Initially contains a `master_password` module. No Tauri dependency.
+- **Backend (Tauri):** A new `settings_cmd.rs` command file that delegates to the `settings` crate. The `settings` crate is added to `src-tauri/Cargo.toml` and `Cargo.toml` workspace.
 - **Frontend (React/TypeScript):** A new `SettingsPage` component, a sidebar nav entry, and small additions to `AppContext` and `App.tsx`.
-
-No changes to the `password-vault` or `encrypt` crates are needed.
 
 ---
 
-## Backend
+## `crates/settings` Crate
 
-### New Tauri command: `reset_master_password`
+### Cargo.toml dependencies
 
-**Signature:**
+```toml
+[dependencies]
+encrypt = { path = "../encrypt" }
+password-vault = { path = "../password-vault" }
+```
+
+### File structure
+
+```
+crates/settings/
+  Cargo.toml
+  src/
+    lib.rs           # pub mod master_password;
+    master_password.rs
+```
+
+### `master_password.rs`
+
+**Public function:**
+
 ```rust
 pub fn reset_master_password(
-    current_password: String,
-    new_password: String,
-    state: State<'_, AppState>,
+    db_path: &str,
+    salt_path: &str,
+    current_password: &str,
+    new_password: &str,
+    current_key: &[u8; 32],
 ) -> Result<(), String>
 ```
 
 **Steps:**
 
-1. **Verify current password.** Re-derive the key from `current_password` + the existing salt (read from `vault.salt`). Compare byte-for-byte with the key in `state.vault_key`. If they differ, return `Err("Current password is incorrect")`.
+1. **Verify current password.** Read `salt_path` from disk. Re-derive key from `current_password` + salt. Compare byte-for-byte with `current_key`. If mismatch → return `Err("Current password is incorrect")`.
 
-2. **Load all credentials.** Call `vault.list()` on the already-open vault in `state.vault` to get all credentials in memory.
+2. **Load all credentials.** Open `SqliteStore` at `db_path` with `current_key`. Call `load_all()` to get all credentials in memory.
 
-3. **Generate new key.** Call `generate_salt()` for a fresh salt. Call `derive_key(&new_password, &new_salt)` to get the new 32-byte AES key.
+3. **Generate new key.** Call `generate_salt()` for a fresh salt. Call `derive_key(new_password, &new_salt)` for the new 32-byte key.
 
-4. **Re-encrypt to a temp db.** Open a new `SqliteStore` at `vault.db.tmp` with the new key. Upsert all credentials into it.
+4. **Re-encrypt to temp files.** Open a new `SqliteStore` at `{db_path}.tmp` with the new key. Upsert all credentials.
 
-5. **Atomic commit.** Write new salt to `vault.salt.tmp`, then:
-   - `rename("vault.salt.tmp", "vault.salt")`
-   - `rename("vault.db.tmp", "vault.db")`
+5. **Atomic commit:**
+   - Write new salt to `{salt_path}.tmp`
+   - `rename("{salt_path}.tmp", salt_path)`
+   - `rename("{db_path}.tmp", db_path)`
 
-6. **Lock.** Call `state.lock()` to clear the vault and key from memory. Return `Ok(())`.
+6. Return `Ok(())`. (Locking the in-memory state is the caller's responsibility.)
 
-**Error handling:** If any step fails after step 4 has begun, the `.tmp` files are left behind but the live `vault.salt` and `vault.db` are untouched. The user can retry safely.
+**Error safety:** If any step fails after step 4 begins, the `.tmp` files are abandoned but the live `vault.salt` and `vault.db` are untouched. The user can retry safely.
+
+---
+
+## Backend (Tauri)
+
+### Workspace (`Cargo.toml`)
+
+Add `"crates/settings"` to the `[workspace] members` array.
+
+### `src-tauri/Cargo.toml`
+
+Add:
+```toml
+settings = { path = "../crates/settings" }
+```
+
+### New file: `src-tauri/src/commands/settings_cmd.rs`
+
+```rust
+#[tauri::command]
+pub fn reset_master_password(
+    current_password: String,
+    new_password: String,
+    state: State<'_, AppState>,
+) -> Result<(), String> {
+    let current_key = state.vault_key.lock().unwrap()
+        .ok_or("vault is locked")?;
+    settings::master_password::reset_master_password(
+        &vault_db_path(),
+        &vault_salt_path(),
+        &current_password,
+        &new_password,
+        &current_key,
+    )?;
+    state.lock();
+    Ok(())
+}
+```
+
+> `vault_db_path()` and `vault_salt_path()` are currently private helpers in `vault_cmd.rs` — they should be extracted to a shared `paths.rs` module in `src-tauri/src/` so both command files can use them.
+
+### `src-tauri/src/commands/mod.rs`
+
+Add `pub mod settings_cmd;` and register `reset_master_password` in the Tauri command handler.
 
 ---
 
@@ -79,7 +146,7 @@ A form with three fields:
 - **Confirm new password** (type=password)
 
 **Behavior:**
-- Client-side: validate that new password and confirm match before invoking the command.
+- Client-side: validate new password and confirm match before invoking.
 - On submit: `invoke("reset_master_password", { currentPassword, newPassword })`.
 - On success: call `setUnlocked(false)` — redirects to the unlock screen.
 - On error: display the error string via the existing `ErrorBanner` component.
@@ -98,11 +165,12 @@ Import `SettingsPage` and add to `PageRouter`:
 ```
 User fills form → client validates confirm match
   → invoke reset_master_password(currentPassword, newPassword)
-    → verify current password (key comparison)
-    → load all credentials
-    → generate new salt + key
-    → re-encrypt to vault.db.tmp
-    → atomic rename salt + db
+    → settings::master_password::reset_master_password(...)
+        → verify current password (re-derive + compare)
+        → load all credentials from vault.db
+        → generate new salt + key
+        → re-encrypt to vault.db.tmp
+        → atomic rename salt + db
     → state.lock()
   → frontend: setUnlocked(false) → UnlockPage shown
 ```
@@ -112,5 +180,5 @@ User fills form → client validates confirm match
 ## What Is Not In Scope
 
 - Export/import vault data
-- Any other settings (theme, auto-lock timeout, etc.)
+- Any other settings (theme, auto-lock timeout, etc.) — future modules in `crates/settings`
 - Password strength meter for the new password
