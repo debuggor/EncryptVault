@@ -17,6 +17,10 @@ export default function SettingsPage() {
       setError("New passwords do not match");
       return;
     }
+    if (newPassword.length < 8) {
+      setError("New password must be at least 8 characters");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
