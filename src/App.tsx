@@ -14,10 +14,10 @@ function PageRouter() {
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 overflow-auto p-8">
-        {currentPage === "encrypt"  && <EncryptPage />}
-        {currentPage === "vault"    && <VaultPage />}
-        {currentPage === "wallet"   && <WalletPage />}
-        {currentPage === "qr"       && <QRPage />}
+        {currentPage === "encrypt" && <EncryptPage />}
+        {currentPage === "vault" && <VaultPage />}
+        {currentPage === "wallet" && <WalletPage />}
+        {currentPage === "qr" && <QRPage />}
         {currentPage === "settings" && <SettingsPage />}
       </main>
     </div>

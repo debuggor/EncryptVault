@@ -1,6 +1,6 @@
-use tauri::State;
-use crate::state::AppState;
 use crate::paths::{vault_db_path, vault_salt_path};
+use crate::state::AppState;
+use tauri::State;
 
 #[tauri::command]
 pub fn reset_master_password(
@@ -8,11 +8,7 @@ pub fn reset_master_password(
     new_password: String,
     state: State<'_, AppState>,
 ) -> Result<(), String> {
-    let current_key = state
-        .vault_key
-        .lock()
-        .unwrap()
-        .ok_or("vault is locked")?;
+    let current_key = state.vault_key.lock().unwrap().ok_or("vault is locked")?;
     settings::master_password::reset_master_password(
         &vault_db_path(),
         &vault_salt_path(),

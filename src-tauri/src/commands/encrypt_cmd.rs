@@ -1,4 +1,6 @@
-use encrypt::{decrypt_bytes_with_passphrase, decrypt_text, encrypt_bytes_with_passphrase, encrypt_text};
+use encrypt::{
+    decrypt_bytes_with_passphrase, decrypt_text, encrypt_bytes_with_passphrase, encrypt_text,
+};
 
 #[tauri::command]
 pub fn cmd_encrypt_text(passphrase: String, plaintext: String) -> Result<String, String> {

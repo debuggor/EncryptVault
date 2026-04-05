@@ -1,5 +1,5 @@
-use std::sync::Mutex;
 use password_vault::Vault;
+use std::sync::Mutex;
 use wallet::Wallet;
 
 pub struct AppState {

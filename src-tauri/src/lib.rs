@@ -1,3 +1,3 @@
-pub mod state;
-pub mod paths;
 pub mod commands;
+pub mod paths;
+pub mod state;
