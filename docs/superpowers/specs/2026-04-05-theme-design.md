@@ -37,7 +37,7 @@ A single `useEffect` inside `AppProvider` is the authoritative place that:
 2. Adds or removes `class="dark"` on `document.documentElement`.
 3. Writes the choice to `localStorage` under key `encryptvault-theme`.
 
-A `matchMedia` change listener keeps System mode live: if the user changes macOS appearance while the app is open, the dark class updates immediately without requiring a restart or manual action.
+A `matchMedia` change listener (only active when `theme === 'system'`) keeps System mode live: if the user changes macOS appearance while the app is open, the dark class updates immediately without requiring a restart or manual action.
 
 On first render, `AppProvider` reads `localStorage` to initialise `theme`; if nothing is stored it defaults to `'system'`.
 
@@ -56,7 +56,7 @@ All `dark:` variants use standard Tailwind grey/blue scale values. No custom CSS
 | Primary accent | `bg-blue-600` | unchanged |
 | Focus ring | `ring-blue-500` | unchanged |
 
-The sidebar (`bg-gray-900`) is already dark and remains unchanged in both modes.
+The sidebar (`bg-gray-900`) is already dark; add explicit `dark:` variants to maintain its appearance in both light and night modes.
 
 ## Sidebar switcher
 
@@ -88,13 +88,29 @@ Inactive cards: `border-gray-300 dark:border-gray-700` with default text colour.
 
 The two sections (Appearance and Master password) are separated by a `border-t`.
 
+## Clarifications
+
+**Sidebar dark mode isolation:** The sidebar currently uses dark colors (`bg-gray-900`). To prevent unintended changes when the `dark` class is applied, add explicit `dark:` variants to all sidebar elements (e.g., `dark:bg-gray-900`, `dark:text-white`) to maintain the current appearance in both light and night modes.
+
+**ErrorBanner colors:** Use Tailwind's built-in dark variants: `dark:bg-red-900/20 dark:border-red-800 dark:text-red-300`.
+
+**Settings card layout:** On desktop, cards use `flex flex-row gap-4`; on mobile (`max-sm:`), they stack vertically with `flex-col`.
+
+**Icon implementation:** Use emoji characters (☀️🌙💻) as shown. Add `title` attributes for tooltips: `"Light"`, `"Night"`, `"System"`.
+
+**Type exports:** Export the `Theme` type from `AppContext` for use in `Sidebar` and `SettingsPage`.
+
+**Invalid localStorage handling:** If the stored value is not `'light'`, `'night'`, or `'system'`, default to `'system'` and overwrite the invalid value.
+
+**Default behavior:** On first launch (no stored preference), default to `'system'`.
+
 ## Files to change
 
 | File | Change |
 |---|---|
 | `tailwind.config.js` | Add `darkMode: 'class'` |
 | `src/context/AppContext.tsx` | Add `theme`, `setTheme`; `useEffect` for class toggle + localStorage; `matchMedia` listener |
-| `src/components/Sidebar.tsx` | Add icon row; add `dark:` variants to sidebar elements |
+| `src/components/Sidebar.tsx` | Add icon row; add explicit `dark:` variants to maintain current sidebar appearance |
 | `src/App.tsx` | Add `dark:` variants to main layout wrapper |
 | `src/pages/UnlockPage.tsx` | Add `dark:` variants |
 | `src/pages/SettingsPage.tsx` | Add Appearance section; add `dark:` variants throughout |
