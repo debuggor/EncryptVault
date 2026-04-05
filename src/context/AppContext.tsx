@@ -32,10 +32,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    // Persist theme choice
-    localStorage.setItem("encryptvault-theme", theme);
-
-    // Determine effective mode
+    // Determine effective mode (system → follow OS)
     const effectiveMode =
       theme === "system"
         ? window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -43,21 +40,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
           : "light"
         : theme;
 
-    // Apply dark class
+    // Toggle dark class
+    const html = document.documentElement;
     if (effectiveMode === "night") {
-      document.documentElement.classList.add("dark");
+      html.classList.add("dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      html.classList.remove("dark");
     }
 
-    // Listen for system preference changes (only when theme === "system")
+    // Persist choice
+    localStorage.setItem("encryptvault-theme", theme);
+
+    // System mode live updates
     if (theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = () => {
-        if (mediaQuery.matches) {
-          document.documentElement.classList.add("dark");
+        const effective = mediaQuery.matches ? "night" : "light";
+        if (effective === "night") {
+          html.classList.add("dark");
         } else {
-          document.documentElement.classList.remove("dark");
+          html.classList.remove("dark");
         }
       };
       mediaQuery.addEventListener("change", handleChange);
