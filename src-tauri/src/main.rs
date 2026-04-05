@@ -13,6 +13,7 @@ use commands::{
         search_credentials, unlock_vault, update_credential,
     },
     wallet_cmd::{derive_btc_address, derive_eth_address, import_wallet, setup_wallet, sign_eth_tx},
+    settings_cmd::reset_master_password,
 };
 
 fn main() {
@@ -39,6 +40,7 @@ fn main() {
             cmd_generate_qr,
             cmd_decode_qr_file,
             cmd_decode_qr_frame,
+            reset_master_password,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
