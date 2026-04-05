@@ -6,4 +6,5 @@ members = [
     "crates/password-vault",
     "crates/wallet",
     "crates/qr-engine",
+    "crates/settings",
 ]
