@@ -25,9 +25,13 @@ export default function UnlockPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-      <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-xl">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">EncryptVault</h1>
-        <p className="text-sm text-gray-500 mb-6">Enter your master password to unlock.</p>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 w-full max-w-sm shadow-xl">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2">
+          EncryptVault
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          Enter your master password to unlock.
+        </p>
         <ErrorBanner message={error} onDismiss={() => setError(null)} />
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -35,7 +39,7 @@ export default function UnlockPage() {
             placeholder="Master password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
             required
             autoFocus
           />
