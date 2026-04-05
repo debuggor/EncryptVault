@@ -27,11 +27,18 @@ pub fn reset_master_password(
     // Step 4: Re-encrypt all credentials into a temp vault
     let db_tmp = format!("{db_path}.tmp");
     let mut vault_tmp = password_vault::Vault::open(&db_tmp, &new_key)?;
+    // Use `update` (not `add`) to preserve original credential IDs.
+    // `add` would generate new UUIDs, breaking any external references.
     for cred in credentials {
         vault_tmp.update(cred)?;
     }
 
-    // Step 5: Atomic commit — rename temp files over live files
+    // Step 5: Atomic commit.
+    // Salt is renamed first intentionally: if the process crashes after the salt rename
+    // but before the DB rename, db.tmp still exists on disk. A user with the new password
+    // and the committed new salt can manually rename db.tmp → db to recover. Committing
+    // the DB first would permanently lose the new salt (held only in memory), making the
+    // new DB unrecoverable.
     let salt_tmp = format!("{salt_path}.tmp");
     std::fs::write(&salt_tmp, new_salt).map_err(|e| e.to_string())?;
     std::fs::rename(&salt_tmp, salt_path).map_err(|e| e.to_string())?;
@@ -130,5 +137,9 @@ mod tests {
         // Original salt file is untouched (rename of .tmp never happened)
         let salt_on_disk = std::fs::read(&salt_path).unwrap();
         assert_eq!(salt_on_disk, salt.as_ref());
+
+        // Original vault is still openable with the original key
+        let vault = Vault::open(&db_path, &key).unwrap();
+        let _ = vault.list(); // just verify it opens without error
     }
 }
