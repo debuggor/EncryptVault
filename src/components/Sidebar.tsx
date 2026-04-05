@@ -9,19 +9,24 @@ const PAGES = [
   { id: "settings" as const, label: "Settings", icon: "⚙️" },
 ];
 
+const THEMES: { id: Theme; icon: string; label: string }[] = [
+  { id: "light", icon: "☀️", label: "Light" },
+  { id: "night", icon: "🌙", label: "Night" },
+  { id: "system", icon: "💻", label: "System" },
+];
+
 export default function Sidebar() {
   const { currentPage, setPage, setUnlocked, theme, setTheme } = useApp();
 
   async function handleLock() {
-    await invoke("lock_vault");
-    setUnlocked(false);
+    try {
+      await invoke("lock_vault");
+      setUnlocked(false);
+    } catch (error) {
+      console.error("Failed to lock vault:", error);
+      // In a real app, you might want to show an error message to the user
+    }
   }
-
-  const themes: { id: Theme; icon: string; label: string }[] = [
-    { id: "light", icon: "☀️", label: "Light" },
-    { id: "night", icon: "🌙", label: "Night" },
-    { id: "system", icon: "💻", label: "System" },
-  ];
 
   return (
     <aside className="w-52 bg-gray-900 text-white flex flex-col h-screen shrink-0">
@@ -33,7 +38,15 @@ export default function Sidebar() {
           <button
             key={p.id}
             onClick={() => setPage(p.id)}
-            className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-800 transition-colors ${
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setPage(p.id);
+              }
+            }}
+            aria-current={currentPage === p.id ? "page" : undefined}
+            tabIndex={0}
+            className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               currentPage === p.id ? "bg-gray-800 font-medium" : ""
             }`}
           >
@@ -46,12 +59,20 @@ export default function Sidebar() {
       {/* Theme switcher */}
       <div className="p-4 border-t border-gray-700">
         <div className="flex justify-center gap-3">
-          {themes.map((t) => (
+          {THEMES.map((t) => (
             <button
               key={t.id}
               onClick={() => setTheme(t.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setTheme(t.id);
+                }
+              }}
               title={t.label}
-              className={`p-2 text-lg transition-colors ${
+              aria-pressed={theme === t.id}
+              tabIndex={0}
+              className={`p-2 text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 theme === t.id
                   ? "bg-gray-600 rounded-lg"
                   : "opacity-40 hover:opacity-70"
@@ -66,7 +87,14 @@ export default function Sidebar() {
       <div className="p-4 border-t border-gray-700">
         <button
           onClick={handleLock}
-          className="w-full text-sm text-gray-400 hover:text-white transition-colors"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleLock();
+            }
+          }}
+          tabIndex={0}
+          className="w-full text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Lock vault
         </button>
