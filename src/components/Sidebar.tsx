@@ -1,21 +1,27 @@
 import { invoke } from "@tauri-apps/api/core";
-import { useApp } from "../context/AppContext";
+import { useApp, Theme } from "../context/AppContext";
 
 const PAGES = [
-  { id: "encrypt"  as const, label: "Encrypt / Decrypt", icon: "🔐" },
-  { id: "vault"    as const, label: "Password Vault",     icon: "🗝️" },
-  { id: "wallet"   as const, label: "Wallet",             icon: "💼" },
-  { id: "qr"       as const, label: "QR Code",            icon: "⬛" },
-  { id: "settings" as const, label: "Settings",           icon: "⚙️" },
+  { id: "encrypt" as const, label: "Encrypt / Decrypt", icon: "🔐" },
+  { id: "vault" as const, label: "Password Vault", icon: "🗝️" },
+  { id: "wallet" as const, label: "Wallet", icon: "💼" },
+  { id: "qr" as const, label: "QR Code", icon: "⬛" },
+  { id: "settings" as const, label: "Settings", icon: "⚙️" },
 ];
 
 export default function Sidebar() {
-  const { currentPage, setPage, setUnlocked } = useApp();
+  const { currentPage, setPage, setUnlocked, theme, setTheme } = useApp();
 
   async function handleLock() {
     await invoke("lock_vault");
     setUnlocked(false);
   }
+
+  const themes: { id: Theme; icon: string; label: string }[] = [
+    { id: "light", icon: "☀️", label: "Light" },
+    { id: "night", icon: "🌙", label: "Night" },
+    { id: "system", icon: "💻", label: "System" },
+  ];
 
   return (
     <aside className="w-52 bg-gray-900 text-white flex flex-col h-screen shrink-0">
@@ -36,6 +42,27 @@ export default function Sidebar() {
           </button>
         ))}
       </nav>
+
+      {/* Theme switcher */}
+      <div className="p-4 border-t border-gray-700">
+        <div className="flex justify-center gap-3">
+          {themes.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTheme(t.id)}
+              title={t.label}
+              className={`p-2 text-lg transition-colors ${
+                theme === t.id
+                  ? "bg-gray-600 rounded-lg"
+                  : "opacity-40 hover:opacity-70"
+              }`}
+            >
+              {t.icon}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="p-4 border-t border-gray-700">
         <button
           onClick={handleLock}
