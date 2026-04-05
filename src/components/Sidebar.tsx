@@ -2,10 +2,11 @@ import { invoke } from "@tauri-apps/api/core";
 import { useApp } from "../context/AppContext";
 
 const PAGES = [
-  { id: "encrypt" as const, label: "Encrypt / Decrypt", icon: "🔐" },
-  { id: "vault"   as const, label: "Password Vault",     icon: "🗝️" },
-  { id: "wallet"  as const, label: "Wallet",              icon: "💼" },
-  { id: "qr"      as const, label: "QR Code",             icon: "⬛" },
+  { id: "encrypt"  as const, label: "Encrypt / Decrypt", icon: "🔐" },
+  { id: "vault"    as const, label: "Password Vault",     icon: "🗝️" },
+  { id: "wallet"   as const, label: "Wallet",             icon: "💼" },
+  { id: "qr"       as const, label: "QR Code",            icon: "⬛" },
+  { id: "settings" as const, label: "Settings",           icon: "⚙️" },
 ];
 
 export default function Sidebar() {

@@ -21,3 +21,4 @@ encrypt = { path = "../crates/encrypt" }
 password-vault = { path = "../crates/password-vault" }
 wallet = { path = "../crates/wallet" }
 qr-engine = { path = "../crates/qr-engine" }
+settings = { path = "../crates/settings" }

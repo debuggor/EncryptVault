@@ -1,20 +1,8 @@
 use tauri::State;
 use crate::state::AppState;
+use crate::paths::{vault_db_path, vault_salt_path};
 use encrypt::{derive_key, generate_salt};
 use password_vault::{Credential, Vault};
-
-fn vault_db_path() -> String {
-    let mut path = dirs_next::data_dir()
-        .unwrap_or_else(|| std::path::PathBuf::from("."))
-        .join("EncryptVault");
-    std::fs::create_dir_all(&path).ok();
-    path.push("vault.db");
-    path.to_string_lossy().to_string()
-}
-
-fn vault_salt_path() -> String {
-    vault_db_path().replace(".db", ".salt")
-}
 
 #[tauri::command]
 pub fn is_unlocked(state: State<'_, AppState>) -> bool {

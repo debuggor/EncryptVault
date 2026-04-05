@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type Page = "encrypt" | "vault" | "wallet" | "qr";
+type Page = "encrypt" | "vault" | "wallet" | "qr" | "settings";
 
 interface AppContextType {
   isUnlocked: boolean;
