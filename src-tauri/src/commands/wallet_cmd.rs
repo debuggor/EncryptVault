@@ -1,5 +1,5 @@
-use tauri::State;
 use crate::state::AppState;
+use tauri::State;
 use wallet::{EthTx, Wallet};
 
 #[tauri::command]
@@ -35,11 +35,7 @@ pub fn derive_btc_address(index: u32, state: State<'_, AppState>) -> Result<Stri
 }
 
 #[tauri::command]
-pub fn sign_eth_tx(
-    index: u32,
-    tx: EthTx,
-    state: State<'_, AppState>,
-) -> Result<String, String> {
+pub fn sign_eth_tx(index: u32, tx: EthTx, state: State<'_, AppState>) -> Result<String, String> {
     let guard = state.wallet.lock().unwrap();
     let wallet = guard.as_ref().ok_or("wallet not loaded")?;
     wallet.sign_eth_tx(index, &tx)

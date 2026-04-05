@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo:*)",
+      "Bash(npm:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *.rs) rustfmt \"$f\" 2>/dev/null;; *.ts|*.tsx) npx prettier --write \"$f\" 2>/dev/null;; esac; } 2>/dev/null || true",
+            "statusMessage": "Formatting..."
+          }
+        ]
+      }
+    ]
+  },
+  "worktree": {
+    "symlinkDirectories": ["node_modules"]
+  }
+}

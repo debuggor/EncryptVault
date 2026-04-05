@@ -129,6 +129,7 @@ dependencies = [
  "qr-engine",
  "serde",
  "serde_json",
+ "settings",
  "tauri",
  "tauri-build",
  "wallet",
@@ -4237,6 +4238,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "170fb83ab34de17dc69aa7c67482b22218ddb85da56546f9bd6b929e32a05930"
 dependencies = [
  "stable_deref_trait",
+]
+
+[[package]]
+name = "settings"
+version = "0.1.0"
+dependencies = [
+ "encrypt",
+ "password-vault",
 ]
 
 [[package]]
