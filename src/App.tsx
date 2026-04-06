@@ -11,7 +11,7 @@ function PageRouter() {
   const { isUnlocked, currentPage } = useApp();
   if (!isUnlocked) return <UnlockPage />;
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-white">
       <Sidebar />
       <main className="flex-1 overflow-auto p-8">
         {currentPage === "encrypt" && <EncryptPage />}
