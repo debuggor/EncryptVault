@@ -93,9 +93,7 @@ export default function QRPage() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-6">
-        QR Code
-      </h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-6">QR Code</h2>
       <ErrorBanner message={error} onDismiss={() => setError(null)} />
 
       <div className="flex gap-2 mb-6">
@@ -103,7 +101,7 @@ export default function QRPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === t ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === t ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
@@ -117,7 +115,7 @@ export default function QRPage() {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Text or URL to encode…"
             rows={3}
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white text-gray-900"
           />
           <button
             onClick={generateQr}
@@ -126,7 +124,7 @@ export default function QRPage() {
             Generate QR
           </button>
           {qrUrl && (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col items-center gap-3">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-3">
               <img src={qrUrl} alt="QR code" className="w-48 h-48" />
               <a
                 href={qrUrl}
@@ -174,11 +172,11 @@ export default function QRPage() {
           )}
 
           {decoded && (
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">
+            <div className="bg-gray-100 rounded-xl p-4">
+              <p className="text-xs text-gray-500 mb-1 font-medium">
                 Decoded content
               </p>
-              <p className="text-sm font-mono break-all text-gray-900 dark:text-gray-50">
+              <p className="text-sm font-mono break-all text-gray-900">
                 {decoded}
               </p>
               <button
