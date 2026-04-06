@@ -55,7 +55,7 @@ export default function EncryptPage() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-6">
         Encrypt / Decrypt
       </h2>
       <ErrorBanner message={error} onDismiss={() => setError(null)} />
@@ -65,7 +65,7 @@ export default function EncryptPage() {
           <button
             key={m}
             onClick={() => setMode(m)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${mode === m ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${mode === m ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
           >
             {m === "text" ? "Text" : "File"}
           </button>
@@ -78,7 +78,7 @@ export default function EncryptPage() {
           placeholder="Passphrase"
           value={passphrase}
           onChange={(e) => setPassphrase(e.target.value)}
-          className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
         />
 
         {mode === "text" ? (
@@ -87,7 +87,7 @@ export default function EncryptPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={5}
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
           />
         ) : (
           <input
@@ -115,10 +115,8 @@ export default function EncryptPage() {
         </div>
 
         {output && (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">
-              Output
-            </p>
+          <div className="bg-gray-100 rounded-lg p-4">
+            <p className="text-xs text-gray-500 mb-1 font-medium">Output</p>
             <pre className="text-sm font-mono whitespace-pre-wrap break-all">
               {output}
             </pre>
