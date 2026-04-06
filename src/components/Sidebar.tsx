@@ -29,8 +29,8 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-52 bg-gray-900 dark:bg-gray-900 text-white dark:text-white flex flex-col h-screen shrink-0">
-      <div className="px-4 py-5 text-lg font-bold border-b border-gray-700 dark:border-gray-700">
+    <aside className="w-52 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col h-screen shrink-0">
+      <div className="px-4 py-5 text-lg font-bold border-b border-gray-200 dark:border-gray-700">
         EncryptVault
       </div>
       <nav className="flex-1 py-4">
@@ -46,9 +46,9 @@ export default function Sidebar() {
             }}
             aria-current={currentPage === p.id ? "page" : undefined}
             tabIndex={0}
-            className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-800 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               currentPage === p.id
-                ? "bg-gray-800 dark:bg-gray-800 font-medium"
+                ? "bg-gray-200 dark:bg-gray-800 font-medium"
                 : ""
             }`}
           >
@@ -59,7 +59,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Theme switcher */}
-      <div className="p-4 border-t border-gray-700 dark:border-gray-700">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex justify-center gap-3">
           {THEMES.map((t) => (
             <button
@@ -76,7 +76,7 @@ export default function Sidebar() {
               tabIndex={0}
               className={`p-2 text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 theme === t.id
-                  ? "bg-gray-600 rounded-lg"
+                  ? "bg-gray-300 dark:bg-gray-600 rounded-lg"
                   : "opacity-40 hover:opacity-70"
               }`}
             >
@@ -86,7 +86,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className="p-4 border-t border-gray-700 dark:border-gray-700">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <button
           onClick={handleLock}
           onKeyDown={(e) => {
@@ -96,7 +96,7 @@ export default function Sidebar() {
             }
           }}
           tabIndex={0}
-          className="w-full text-sm text-gray-400 dark:text-gray-400 hover:text-white dark:hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Lock vault
         </button>
