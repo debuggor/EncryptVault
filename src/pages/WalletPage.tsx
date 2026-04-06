@@ -75,9 +75,7 @@ export default function WalletPage() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-6">
-        Wallet
-      </h2>
+      <h2 className="text-xl font-bold text-gray-900 mb-6">Wallet</h2>
       <ErrorBanner message={error} onDismiss={() => setError(null)} />
 
       <div className="flex gap-2 mb-6">
@@ -85,7 +83,7 @@ export default function WalletPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === t ? "bg-blue-600 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${tab === t ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
@@ -101,18 +99,18 @@ export default function WalletPage() {
             Generate new wallet
           </button>
           {mnemonic && (
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-xl p-4">
-              <p className="text-xs text-yellow-800 dark:text-yellow-300 font-semibold mb-2">
+            <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-4">
+              <p className="text-xs text-yellow-800 font-semibold mb-2">
                 Write down your mnemonic — it will not be shown again.
               </p>
-              <p className="font-mono text-sm break-all text-gray-900 dark:text-gray-50">
+              <p className="font-mono text-sm break-all text-gray-900">
                 {mnemonic}
               </p>
             </div>
           )}
-          <hr className="border-gray-200 dark:border-gray-700" />
+          <hr className="border-gray-200" />
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <p className="text-sm font-medium text-gray-700">
               Import existing wallet
             </p>
             <textarea
@@ -120,7 +118,7 @@ export default function WalletPage() {
               onChange={(e) => setImportInput(e.target.value)}
               placeholder="Enter 12-word mnemonic…"
               rows={3}
-              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-mono bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono bg-white text-gray-900"
             />
             <button
               onClick={importWallet}
@@ -135,15 +133,13 @@ export default function WalletPage() {
       {tab === "addresses" && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <label className="text-sm text-gray-600 dark:text-gray-400">
-              Index
-            </label>
+            <label className="text-sm text-gray-600">Index</label>
             <input
               type="number"
               min={0}
               value={addrIndex}
               onChange={(e) => setAddrIndex(Number(e.target.value))}
-              className="w-24 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+              className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm bg-white text-gray-900"
             />
             <button
               onClick={deriveAddresses}
@@ -163,14 +159,12 @@ export default function WalletPage() {
 
       {tab === "sign" && (
         <div className="space-y-3">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600">
             Sign ETH transaction offline (EIP-155)
           </p>
           {(Object.keys(tx) as (keyof EthTx)[]).map((f) => (
             <div key={f} className="flex items-center gap-3">
-              <label className="text-xs text-gray-500 dark:text-gray-400 w-24 shrink-0">
-                {f}
-              </label>
+              <label className="text-xs text-gray-500 w-24 shrink-0">{f}</label>
               <input
                 value={String(tx[f])}
                 onChange={(e) =>
@@ -181,7 +175,7 @@ export default function WalletPage() {
                       : e.target.value,
                   })
                 }
-                className="flex-1 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-1.5 text-sm font-mono bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-mono bg-white text-gray-900"
               />
             </div>
           ))}
@@ -192,10 +186,8 @@ export default function WalletPage() {
             Sign transaction
           </button>
           {signedTx && (
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                Signed tx hex
-              </p>
+            <div className="bg-gray-100 rounded-lg p-4">
+              <p className="text-xs text-gray-500 mb-1">Signed tx hex</p>
               <pre className="text-xs font-mono break-all whitespace-pre-wrap">
                 {signedTx}
               </pre>
@@ -215,14 +207,10 @@ export default function WalletPage() {
 
 function AddrRow({ label, addr }: { label: string; addr: string }) {
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex justify-between items-center shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 flex justify-between items-center shadow-sm">
       <div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-          {label}
-        </p>
-        <p className="text-sm font-mono break-all text-gray-900 dark:text-gray-50">
-          {addr}
-        </p>
+        <p className="text-xs text-gray-500 font-medium">{label}</p>
+        <p className="text-sm font-mono break-all text-gray-900">{addr}</p>
       </div>
       <button
         onClick={() => navigator.clipboard.writeText(addr)}

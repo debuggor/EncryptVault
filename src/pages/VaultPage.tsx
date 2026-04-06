@@ -83,9 +83,7 @@ export default function VaultPage() {
   return (
     <div className="max-w-3xl">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-50">
-          Password Vault
-        </h2>
+        <h2 className="text-xl font-bold text-gray-900">Password Vault</h2>
         <button
           onClick={() => {
             setForm(EMPTY);
@@ -103,15 +101,15 @@ export default function VaultPage() {
         placeholder="Search…"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
       />
 
       {showForm && (
         <form
           onSubmit={save}
-          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 mb-4 space-y-3 shadow-sm"
+          className="bg-white border border-gray-200 rounded-xl p-5 mb-4 space-y-3 shadow-sm"
         >
-          <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-50">
+          <h3 className="font-semibold text-sm text-gray-900">
             {editId ? "Edit" : "New credential"}
           </h3>
           {(["name", "username", "password", "url", "notes"] as const).map(
@@ -123,7 +121,7 @@ export default function VaultPage() {
                 value={form[f]}
                 onChange={(e) => setForm({ ...form, [f]: e.target.value })}
                 required={f === "name"}
-                className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900"
               />
             ),
           )}
@@ -137,7 +135,7 @@ export default function VaultPage() {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="text-sm text-gray-500 dark:text-gray-400 hover:underline"
+              className="text-sm text-gray-500 hover:underline"
             >
               Cancel
             </button>
@@ -147,24 +145,18 @@ export default function VaultPage() {
 
       <div className="space-y-2">
         {filtered.length === 0 && (
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            No credentials found.
-          </p>
+          <p className="text-sm text-gray-400">No credentials found.</p>
         )}
         {filtered.map((c) => (
           <div
             key={c.id}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 flex justify-between items-start shadow-sm"
+            className="bg-white border border-gray-200 rounded-xl px-5 py-4 flex justify-between items-start shadow-sm"
           >
             <div>
-              <p className="font-medium text-sm text-gray-900 dark:text-gray-50">
-                {c.name}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {c.username}
-              </p>
+              <p className="font-medium text-sm text-gray-900">{c.name}</p>
+              <p className="text-xs text-gray-500">{c.username}</p>
               {c.url && <p className="text-xs text-blue-500">{c.url}</p>}
-              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1 font-mono">
+              <div className="text-xs text-gray-400 mt-1 font-mono">
                 {showPw[c.id] ? c.password : "••••••••"}
                 <button
                   onClick={() => setShowPw((p) => ({ ...p, [c.id]: !p[c.id] }))}
